@@ -3,6 +3,12 @@
 	"ignore": "test",
 	"package": [
 		{
+			"checksumSHA1": "zyZXrn3RtSehrnJhBj6ltLoqnC4=",
+			"path": "github.com/appleboy/gin-jwt",
+			"revision": "4ef6a7a1574ad9f81f6ba45c4b74945f62e39a21",
+			"revisionTime": "2017-10-14T05:03:01Z"
+		},
+		{
 			"checksumSHA1": "pMlRSKUZC5Yz/7r/DbLCW3gtFbU=",
 			"path": "github.com/gin-gonic/gin",
 			"revision": "76ad15ab32d000115cb7622a8317d7425dfc039c",
@@ -13,6 +19,12 @@
 			"path": "github.com/spf13/viper",
 			"revision": "7fb2782df3d83e0036cc89f461ed0422628776f4",
 			"revisionTime": "2016-08-12T18:14:35Z"
+		},
+		{
+			"checksumSHA1": "UWjVYmoHlIfHzVIskELHiJQtMOI=",
+			"path": "golang.org/x/crypto/bcrypt",
+			"revision": "6a293f2d4b14b8e6d3f0539e383f6d0d30fce3fd",
+			"revisionTime": "2017-09-25T11:22:06Z"
 		},
 		{
 			"checksumSHA1": "39V1idWER42Lmcmg2Uy40wMzOlo=",

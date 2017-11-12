@@ -2,6 +2,7 @@ package models
 
 import (
 	"github.com/lzientek/octopush-middleware/db"
+	bcrypt "golang.org/x/crypto/bcrypt"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -33,8 +34,27 @@ func (h UserDao) Create(user *User) error {
 	defer db.CloseSession()
 
 	user.ID = bson.NewObjectId()
+	hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), 10)
 
-	err := con.Insert(user)
+	if err == nil {
+		user.Password = string(hash[:])
+		err = con.Insert(user)
+	}
 
 	return err
+}
+
+func (h UserDao) Login(email string, password string) (error, User) {
+	con := db.Init().C("users")
+	defer db.CloseSession()
+
+	var resUser User
+
+	err := con.Find(bson.M{"email": email}).One(&resUser)
+
+	if err == nil {
+		err = bcrypt.CompareHashAndPassword([]byte(resUser.Password), []byte(password))
+	}
+
+	return err, resUser
 }
