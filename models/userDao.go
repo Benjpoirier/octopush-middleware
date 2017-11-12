@@ -39,6 +39,7 @@ func (h UserDao) Create(user *User) error {
 	if err == nil {
 		user.Password = string(hash[:])
 		err = con.Insert(user)
+		user.Password = ""
 	}
 
 	return err

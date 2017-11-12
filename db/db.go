@@ -24,3 +24,12 @@ func Init() *mgo.Database {
 func CloseSession() {
 	mgoSession.Close()
 }
+
+func Create() error {
+	con := Init().C("users")
+	defer CloseSession()
+
+	err := con.EnsureIndex(mgo.Index{Key: []string{"email"}, Unique: true})
+
+	return err
+}
