@@ -5,7 +5,7 @@ import (
 )
 
 var (
-	mgoSession        *mgo.Session
+	mgoSession *mgo.Session
 )
 
 func Init() *mgo.Database {
@@ -17,13 +17,10 @@ func Init() *mgo.Database {
 		panic(err)
 	}
 
-	return mgoSession.DB("test")
+	return mgoSession.DB("smsMiddleware")
 
 }
 
 func CloseSession() {
 	mgoSession.Close()
 }
-
-
-

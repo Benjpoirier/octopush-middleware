@@ -1,7 +1,7 @@
 package server
 
 import (
-	"github.com/faerulsalamun/golang-boilerplate/config"
+	"github.com/lzientek/octopush-middleware/config"
 )
 
 func Init() {

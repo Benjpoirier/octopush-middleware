@@ -2,8 +2,8 @@ package server
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/faerulsalamun/golang-boilerplate/middlewares"
-	"github.com/faerulsalamun/golang-boilerplate/controllers"
+	"github.com/lzientek/octopush-middleware/controllers"
+	"github.com/lzientek/octopush-middleware/middlewares"
 )
 
 func NewRouter() *gin.Engine {
@@ -15,11 +15,20 @@ func NewRouter() *gin.Engine {
 
 	v1 := router.Group("api/v1")
 	{
+		users := v1.Group("/users")
+		{
+			userController := new(controllers.UserController)
 
-		userController := new(controllers.UserController)
+			users.GET("/", userController.GetAll)
+			users.POST("/", userController.Create)
+		}
 
-		v1.GET("/", userController.GetAll)
-
+		templates := v1.Group("/templates")
+		{
+			smsTemplateController := new(controllers.SmsTemplateController)
+			templates.GET("/", smsTemplateController.GetAll)
+			templates.POST("/", smsTemplateController.Create)
+		}
 	}
 
 	return router

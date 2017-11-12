@@ -1,11 +1,11 @@
 package main
 
 import (
-	"github.com/faerulsalamun/golang-boilerplate/server"
+	"github.com/lzientek/octopush-middleware/server"
 	"flag"
 	"fmt"
 	"os"
-	"github.com/faerulsalamun/golang-boilerplate/config"
+	"github.com/lzientek/octopush-middleware/config"
 )
 
 func main() {

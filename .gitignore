@@ -37,3 +37,6 @@ vendor/*
 
 production.yaml
 development.yaml
+octopush-middleware
+
+debug
