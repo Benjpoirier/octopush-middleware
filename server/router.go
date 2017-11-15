@@ -17,7 +17,7 @@ var authMiddleware = &jwt.GinJWTMiddleware{
 	Authenticator: func(email string, password string, c *gin.Context) (string, bool) {
 		err, user := new(models.UserDao).Login(email, password)
 		if err == nil {
-			return user.ID.String(), true
+			return user.ID.Hex(), true
 		}
 
 		return "", false
@@ -50,6 +50,7 @@ func NewRouter() *gin.Engine {
 			smsTemplateController := new(controllers.SmsTemplateController)
 			templates.GET("/", smsTemplateController.GetAll)
 			templates.POST("/", smsTemplateController.Create)
+			templates.PUT("/:id", smsTemplateController.Update)
 		}
 	}
 

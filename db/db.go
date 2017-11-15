@@ -25,6 +25,7 @@ func CloseSession() {
 	mgoSession.Close()
 }
 
+// Create Generate needed database things
 func Create() error {
 	con := Init().C("users")
 	defer CloseSession()
