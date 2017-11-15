@@ -7,9 +7,10 @@ import (
 )
 
 type User struct {
-	ID       bson.ObjectId `bson:"_id" json:"id"`
-	Email    string        `form:"email" json:"email" binding:"required"`
-	Password string        `form:"password" json:"password" binding:"required"`
+	ID        bson.ObjectId `bson:"_id" json:"id"`
+	Email     string        `bson:"email" json:"email" binding:"required"`
+	Password  string        `bson:"password" json:"password" binding:"required"`
+	ApiSecret string        `bson:"api_secret" json:"api_secret"`
 }
 type UserDao struct{}
 
