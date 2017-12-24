@@ -1,11 +1,13 @@
 package main
 
 import (
-	"github.com/lzientek/octopush-middleware/server"
 	"flag"
 	"fmt"
 	"os"
+
 	"github.com/lzientek/octopush-middleware/config"
+	"github.com/lzientek/octopush-middleware/db"
+	"github.com/lzientek/octopush-middleware/server"
 )
 
 func main() {
@@ -16,5 +18,7 @@ func main() {
 	}
 	flag.Parse()
 	config.Init(*enviroment)
+	db.Init()
 	server.Init()
+	defer db.CloseDB()
 }

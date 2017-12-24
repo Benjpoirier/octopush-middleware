@@ -1,36 +1,34 @@
 package db
 
 import (
-	"gopkg.in/mgo.v2"
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"github.com/lzientek/octopush-middleware/config"
+	"github.com/lzientek/octopush-middleware/models"
 )
 
-var (
-	mgoSession *mgo.Session
-)
+var db *gorm.DB
+var err error
 
-func Init() *mgo.Database {
-	var err error
+// Init creates a connection to mysql database and
+// migrates any new models
+func Init() {
+	c := config.GetConfig()
 
-	mgoSession, err = mgo.Dial("mongodb://localhost:27017")
-
+	db, err := gorm.Open("postgres", "host="+c.GetString("db.host")+"user="+c.GetString("db.user")+" dbname="+c.GetString("db.dbname")+" sslmode=disable password="+c.GetString("db.password"))
 	if err != nil {
-		panic(err)
+		panic("failed to connect database : " + err.Error())
 	}
 
-	return mgoSession.DB("smsMiddleware")
+	db.AutoMigrate(&models.User{}, &models.SendTemplate{}, &models.SmsTemplate{})
 
 }
 
-func CloseSession() {
-	mgoSession.Close()
+//GetDB ...
+func GetDB() *gorm.DB {
+	return db
 }
 
-// Create Generate needed database things
-func Create() error {
-	con := Init().C("users")
-	defer CloseSession()
-
-	err := con.EnsureIndex(mgo.Index{Key: []string{"email"}, Unique: true})
-
-	return err
+func CloseDB() {
+	db.Close()
 }
