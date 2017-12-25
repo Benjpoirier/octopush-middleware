@@ -27,7 +27,7 @@ func (u SmsTemplateController) Create(c *gin.Context) {
 	var template models.SmsTemplate
 
 	if err := c.ShouldBindJSON(&template); err == nil {
-		err := db.GetDB().Create(&template)
+		err := db.GetDB().Create(&template).Error
 
 		if err == nil {
 			c.JSON(http.StatusOK, gin.H{"data": template})
@@ -43,7 +43,7 @@ func (u SmsTemplateController) Update(c *gin.Context) {
 	var template models.SmsTemplate
 
 	if err := c.ShouldBindJSON(&template); err == nil {
-		err = db.GetDB().Model(&template).Where("id = ? AND user_id = ?", c.Param("id"), c.MustGet("userID").(string)).Update(template)
+		err := db.GetDB().Model(&template).Where("id = ? AND user_id = ?", c.Param("id"), c.MustGet("userID").(string)).Update(template).Error
 		if err == nil {
 			c.JSON(http.StatusOK, gin.H{"data": template})
 		} else {

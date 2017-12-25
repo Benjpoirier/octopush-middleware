@@ -15,7 +15,7 @@ var err error
 func Init() {
 	c := config.GetConfig()
 
-	db, err := gorm.Open("postgres", "host="+c.GetString("db.host")+"user="+c.GetString("db.user")+" dbname="+c.GetString("db.dbname")+" sslmode=disable password="+c.GetString("db.password"))
+	db, err := gorm.Open("postgres", "host="+c.GetString("db.host")+" user="+c.GetString("db.user")+" dbname="+c.GetString("db.dbname")+" sslmode=disable password="+c.GetString("db.password"))
 	if err != nil {
 		panic("failed to connect database : " + err.Error())
 	}

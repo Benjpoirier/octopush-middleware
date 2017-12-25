@@ -11,8 +11,8 @@ import (
 type SendTemplateController struct{}
 
 func (u SendTemplateController) GetAll(c *gin.Context) {
-	var sendedTemplates []models.SendTemplate
-	err := db.GetDB().Find(&sendedTemplates, models.SendTemplate{UserID: c.MustGet("userID").(string)})
+	var sentTemplates []models.SendTemplate
+	err := db.GetDB().Find(&sentTemplates, models.SendTemplate{SmsTemplateID: c.Param("smsTemplateId")}).Error
 
 	if err != nil {
 		c.JSON(500, gin.H{"message": "Error to retrieve user", "error": err})
@@ -20,14 +20,14 @@ func (u SendTemplateController) GetAll(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, gin.H{"data": sendedTemplates})
+	c.JSON(200, gin.H{"data": sentTemplates})
 }
 
 func (u SendTemplateController) Create(c *gin.Context) {
 	var template models.SendTemplate
 
 	if err := c.ShouldBindJSON(&template); err == nil {
-		err := db.GetDB().Create(&template)
+		err := db.GetDB().Create(&template).Error
 
 		if err == nil {
 			c.JSON(http.StatusOK, gin.H{"data": template})

@@ -6,6 +6,7 @@ import (
 	jwt "github.com/appleboy/gin-jwt"
 	"github.com/gin-gonic/gin"
 	"github.com/lzientek/octopush-middleware/controllers"
+	"github.com/lzientek/octopush-middleware/db"
 	"github.com/lzientek/octopush-middleware/models"
 )
 
@@ -15,9 +16,9 @@ var authMiddleware = &jwt.GinJWTMiddleware{
 	Timeout:    time.Hour,
 	MaxRefresh: time.Hour,
 	Authenticator: func(email string, password string, c *gin.Context) (string, bool) {
-		err, user := new(models.UserDao).Login(email, password)
+		err, user := new(models.User).Login(db.GetDB(), email, password)
 		if err == nil {
-			return user.ID.Hex(), true
+			return user.ID, true
 		}
 
 		return "", false
@@ -51,6 +52,7 @@ func NewRouter() *gin.Engine {
 			templates.GET("/", smsTemplateController.GetAll)
 			templates.POST("/", smsTemplateController.Create)
 			templates.PUT("/:id", smsTemplateController.Update)
+			templates.GET("/:smsTemplateId/sent", smsTemplateController.Update)
 		}
 	}
 
