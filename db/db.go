@@ -15,11 +15,13 @@ var err error
 func Init() {
 	c := config.GetConfig()
 
-	db, err := gorm.Open("postgres", "host="+c.GetString("db.host")+" user="+c.GetString("db.user")+" dbname="+c.GetString("db.dbname")+" sslmode=disable password="+c.GetString("db.password"))
+	db, err = gorm.Open("postgres", "host="+c.GetString("db.host")+" user="+c.GetString("db.user")+" dbname="+c.GetString("db.dbname")+" sslmode=disable password="+c.GetString("db.password"))
 	if err != nil {
 		panic("failed to connect database : " + err.Error())
 	}
 
+	db.Exec("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";")
+	db.DropTableIfExists(&models.User{}, &models.SendTemplate{}, &models.SmsTemplate{})
 	db.AutoMigrate(&models.User{}, &models.SendTemplate{}, &models.SmsTemplate{})
 
 }
