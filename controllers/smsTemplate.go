@@ -27,6 +27,7 @@ func (u SmsTemplateController) Create(c *gin.Context) {
 	var template models.SmsTemplate
 
 	if err := c.ShouldBindJSON(&template); err == nil {
+		template.UserID = c.MustGet("userID").(string)
 		err := db.GetDB().Create(&template).Error
 
 		if err == nil {

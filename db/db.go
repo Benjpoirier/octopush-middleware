@@ -21,9 +21,11 @@ func Init() {
 	}
 
 	db.Exec("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";")
-	db.DropTableIfExists(&models.User{}, &models.SendTemplate{}, &models.SmsTemplate{})
-	db.AutoMigrate(&models.User{}, &models.SendTemplate{}, &models.SmsTemplate{})
 
+	db.AutoMigrate(&models.SendTemplate{}, &models.SmsTemplate{}, &models.User{})
+
+	db.Model(&models.SmsTemplate{}).AddForeignKey("user_id", "users(id)", "RESTRICT", "RESTRICT")
+	db.Model(&models.SendTemplate{}).AddForeignKey("sms_template_id", "sms_templates(id)", "RESTRICT", "RESTRICT")
 }
 
 //GetDB ...

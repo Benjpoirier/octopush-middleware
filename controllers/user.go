@@ -25,12 +25,13 @@ func (u UserController) GetAll(c *gin.Context) {
 }
 
 func (u UserController) Create(c *gin.Context) {
-	var user models.User
+	var user models.CreateUser
 	if err := c.ShouldBindJSON(&user); err == nil {
-		err := db.GetDB().Create(&user).Error
+		var dbUser = models.User{Password: user.Password, Email: user.Email}
+		err := db.GetDB().Create(&dbUser).Error
 
 		if err == nil {
-			c.JSON(http.StatusOK, gin.H{"data": user})
+			c.JSON(http.StatusOK, gin.H{"data": dbUser})
 		} else {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		}
