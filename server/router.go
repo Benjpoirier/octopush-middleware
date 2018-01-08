@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/lzientek/octopush-middleware/controllers"
 	"github.com/lzientek/octopush-middleware/db"
+	"github.com/lzientek/octopush-middleware/middleware"
 	"github.com/lzientek/octopush-middleware/models"
 )
 
@@ -39,8 +40,8 @@ func NewRouter() *gin.Engine {
 
 		users := v1.Group("/users")
 		{
+			users.Use(middleware.AdminMiddleware())
 			userController := new(controllers.UserController)
-
 			users.POST("/", userController.Create)
 		}
 
