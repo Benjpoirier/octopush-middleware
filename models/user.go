@@ -8,18 +8,21 @@ import (
 )
 
 type CreateUser struct {
-	Email    string `json:"email" binding:"required"`
-	Password string `json:"password" binding:"required"`
+	Email           string `json:"email" binding:"required"`
+	Password        string `json:"password" binding:"required"`
+	ThirdPartAPIKey string `json:"third_part_api_key"  binding:"required"`
 }
 
 type User struct {
-	ID        string     `gorm:"type:uuid;default:uuid_generate_v4()" json:"id"`
-	Email     string     `gorm:"unique_index" json:"email"`
-	Password  string     `json:"-"`
-	APISecret string     `json:"api_secret"`
-	CreatedAt time.Time  `json:"created_at"`
-	UpdatedAt time.Time  `json:"updated_at"`
-	DeletedAt *time.Time `json:"-"`
+	ID              string     `gorm:"type:uuid;default:uuid_generate_v4()" json:"id"`
+	Email           string     `gorm:"unique_index" json:"email"`
+	Password        string     `json:"-"`
+	APIKey          string     `json:"api_key" gorm:"unique_index"`
+	APISecret       string     `json:"api_secret"  gorm:"index"`
+	ThirdPartAPIKey string     `json:"third_part_api_key"`
+	CreatedAt       time.Time  `json:"created_at"`
+	UpdatedAt       time.Time  `json:"updated_at"`
+	DeletedAt       *time.Time `json:"-"`
 }
 
 func (h User) Login(db *gorm.DB, email string, password string) (error, User) {
@@ -32,6 +35,7 @@ func (h User) Login(db *gorm.DB, email string, password string) (error, User) {
 
 	return err, user
 }
+
 func (u *User) BeforeUpdate() (err error) {
 	if u.Password != "" {
 		crypted, err := bcrypt.GenerateFromPassword([]byte(u.Password), 0)

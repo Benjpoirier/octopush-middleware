@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/lzientek/octopush-middleware/db"
+	"github.com/lzientek/octopush-middleware/lib/rand"
 	"github.com/lzientek/octopush-middleware/models"
 )
 
@@ -27,7 +28,14 @@ func (u UserController) GetAll(c *gin.Context) {
 func (u UserController) Create(c *gin.Context) {
 	var user models.CreateUser
 	if err := c.ShouldBindJSON(&user); err == nil {
-		var dbUser = models.User{Password: user.Password, Email: user.Email}
+		var dbUser = models.User{
+			Password:        user.Password,
+			Email:           user.Email,
+			ThirdPartAPIKey: user.ThirdPartAPIKey,
+			APIKey:          rand.String(32),
+			APISecret:       rand.String(64),
+		}
+
 		err := db.GetDB().Create(&dbUser).Error
 
 		if err == nil {

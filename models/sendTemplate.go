@@ -4,8 +4,10 @@ import "time"
 
 type SendTemplate struct {
 	ID            string     `gorm:"type:uuid;primary_key;default:uuid_generate_v4()" json:"id"`
-	SmsTemplateID string     `gorm:"type:uuid;"`
+	SmsTemplateID string     `json:"sms_template_id" gorm:"type:uuid;" binding:"required"`
+	SmsRecipients string     `json:"sms_recipients" binding:"required"`
+	SmsSender     string     `json:"sms_sender" gorm:"size:11"`
 	CreatedAt     time.Time  `json:"created_at"`
 	UpdatedAt     time.Time  `json:"updated_at"`
-	DeletedAt     *time.Time `json:""`
+	DeletedAt     *time.Time `json:"-"`
 }

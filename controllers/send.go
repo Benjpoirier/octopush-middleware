@@ -15,7 +15,7 @@ func (u SendTemplateController) GetAll(c *gin.Context) {
 	err := db.GetDB().Find(&sentTemplates, models.SendTemplate{SmsTemplateID: c.Param("smsTemplateId")}).Error
 
 	if err != nil {
-		c.JSON(500, gin.H{"message": "Error to retrieve user", "error": err})
+		c.JSON(500, gin.H{"message": "Error to retrieve sendings", "error": err})
 		c.Abort()
 		return
 	}
