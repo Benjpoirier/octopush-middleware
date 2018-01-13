@@ -10,10 +10,12 @@ import (
 
 type OctopushSms struct {
 	Userlogin     string `json:"user_login"`
+	APIKey        string `json:"api_key"`
 	SmsRecipients string `json:"sms_recipients"`
 	SmsText       string `json:"sms_text"`
 	SmsType       string `json:"sms_type"`
 	SmsSender     string `json:"sms_sender"`
+	RequestMode   string `json:"request_mode"`
 }
 
 type OctopushResult struct {
@@ -28,13 +30,15 @@ type OctopushResult struct {
 	Failures         string `json:"failures"`
 }
 
-func (o OctopushSms) Send() (OctopushResult, error) {
+func (o *OctopushSms) Send() (OctopushResult, error) {
 	c := config.GetConfig()
-	url := c.GetString("app.octpush_url")
-	b := new(bytes.Buffer)
-	json.NewEncoder(b).Encode(o)
-
-	resp, err := http.Post(url, "application/json", b)
+	url := c.GetString("app.octpush.url")
+	buffer := new(bytes.Buffer)
+	json.NewEncoder(buffer).Encode(o)
+	if o.RequestMode == "" {
+		o.RequestMode = c.GetString("app.octpush.request_mode")
+	}
+	resp, err := http.Post(url, "application/json", buffer)
 
 	var result OctopushResult
 

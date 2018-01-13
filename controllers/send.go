@@ -4,7 +4,9 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/hoisie/mustache"
 	"github.com/lzientek/octopush-middleware/db"
+	"github.com/lzientek/octopush-middleware/lib/octopush"
 	"github.com/lzientek/octopush-middleware/models"
 )
 
@@ -24,10 +26,15 @@ func (u SendTemplateController) GetAll(c *gin.Context) {
 }
 
 func (u SendTemplateController) Create(c *gin.Context) {
-	var template models.SendTemplate
+	var send models.ApiSendTemplate
 
-	if err := c.ShouldBindJSON(&template); err == nil {
-		err := db.GetDB().Create(&template).Error
+	if err := c.ShouldBindJSON(&send); err == nil {
+		var template models.SmsTemplate
+		err := db.GetDB().Find(&template, c.Param("smsTemplateId")).Error
+		if err != nil {
+			user, _ := c.Get("user")
+			Send(&template, send, user.(models.User))
+		}
 
 		if err == nil {
 			c.JSON(http.StatusOK, gin.H{"data": template})
@@ -37,4 +44,22 @@ func (u SendTemplateController) Create(c *gin.Context) {
 	} else {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
+}
+
+func Send(template *models.SmsTemplate, send models.ApiSendTemplate, user models.User) (octopush.OctopushResult, error) {
+	sender := template.SmsSender
+	if send.SmsSender != "" {
+		sender = send.SmsSender
+	}
+	msg := mustache.Render(template.Content, send.Data)
+	sms := octopush.OctopushSms{
+		SmsRecipients: send.SmsRecipients,
+		SmsSender:     sender,
+		SmsText:       msg,
+		Userlogin:     user.Email,
+		APIKey:        user.ThirdPartAPIKey,
+	}
+	result, err := sms.Send()
+	err = db.GetDB().Create(&send).Error
+	return result, err
 }
