@@ -38,5 +38,5 @@ vendor/*
 production.yaml
 development.yaml
 octopush-middleware
-
+.vscode
 debug
