@@ -1,32 +1,10 @@
 package server
 
 import (
-	"time"
-
-	jwt "github.com/appleboy/gin-jwt"
 	"github.com/gin-gonic/gin"
 	"github.com/lzientek/octopush-middleware/controllers"
-	"github.com/lzientek/octopush-middleware/db"
 	"github.com/lzientek/octopush-middleware/middleware"
-	"github.com/lzientek/octopush-middleware/models"
 )
-
-var authMiddleware = &jwt.GinJWTMiddleware{
-	Realm:      "user zone",
-	Key:        []byte("89ef52f2-f3db-490c-91d6-bfbcb914f3a2"),
-	Timeout:    time.Hour,
-	MaxRefresh: time.Hour,
-	Authenticator: func(email string, password string, c *gin.Context) (string, bool) {
-		err, user := new(models.User).Login(db.GetDB(), email, password)
-		if err == nil {
-			return user.ID, true
-		}
-
-		return "", false
-	},
-
-	TokenLookup: "header:Authorization",
-}
 
 func NewRouter() *gin.Engine {
 	router := gin.New()
@@ -36,8 +14,6 @@ func NewRouter() *gin.Engine {
 
 	v1 := router.Group("api/v1")
 	{
-		v1.POST("/login", authMiddleware.LoginHandler)
-
 		users := v1.Group("/users")
 		{
 			users.Use(middleware.AdminMiddleware())
@@ -47,7 +23,7 @@ func NewRouter() *gin.Engine {
 
 		templates := v1.Group("/templates")
 		{
-			templates.Use(authMiddleware.MiddlewareFunc())
+			templates.Use(middleware.ApiMiddleware())
 
 			smsTemplateController := new(controllers.SmsTemplateController)
 			templates.GET("/", smsTemplateController.GetAll)

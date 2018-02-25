@@ -14,5 +14,5 @@ type SendTemplate struct {
 
 type ApiSendTemplate struct {
 	SendTemplate
-	Data interface{} `json:"Data"`
+	Data interface{} `json:"data"`
 }

@@ -14,7 +14,7 @@ func ApiMiddleware() gin.HandlerFunc {
 		var user models.User
 		err := db.GetDB().First(&user, models.User{APISecret: secret, APIKey: key}).Error
 
-		if err != nil {
+		if err == nil {
 			c.Set("user", user)
 			c.Next()
 			return

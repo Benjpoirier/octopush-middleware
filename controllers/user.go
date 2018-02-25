@@ -29,7 +29,6 @@ func (u UserController) Create(c *gin.Context) {
 	var user models.CreateUser
 	if err := c.ShouldBindJSON(&user); err == nil {
 		var dbUser = models.User{
-			Password:        user.Password,
 			Email:           user.Email,
 			ThirdPartAPIKey: user.ThirdPartAPIKey,
 			APIKey:          rand.String(32),
