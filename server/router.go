@@ -29,6 +29,7 @@ func NewRouter() *gin.Engine {
 			templates.GET("/", smsTemplateController.GetAll)
 			templates.POST("/", smsTemplateController.Create)
 			templates.PUT("/:id", smsTemplateController.Update)
+			templates.GET("/:id", smsTemplateController.Show)
 		}
 
 		sends := v1.Group("/send")

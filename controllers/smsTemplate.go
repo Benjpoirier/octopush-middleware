@@ -23,6 +23,19 @@ func (u SmsTemplateController) GetAll(c *gin.Context) {
 	c.JSON(200, gin.H{"data": smsTemplates})
 }
 
+func (u SmsTemplateController) Show(c *gin.Context) {
+	var smsTemplate models.SmsTemplate
+	err := db.GetDB().First(&smsTemplate, models.SmsTemplate{UserID: c.MustGet("user").(models.User).ID, ID: c.Param("id")}).Error
+
+	if err != nil {
+		c.JSON(500, gin.H{"message": "Error to retrieve user", "error": err})
+		c.Abort()
+		return
+	}
+
+	c.JSON(200, gin.H{"data": smsTemplate})
+}
+
 func (u SmsTemplateController) Create(c *gin.Context) {
 	var template models.SmsTemplate
 
