@@ -34,7 +34,9 @@ func NewRouter() *gin.Engine {
 
 		sends := v1.Group("/send")
 		{
+			sends.Use(middleware.ApiMiddleware())
 			sendTemplateController := new(controllers.SendTemplateController)
+
 			sends.POST("/:smsTemplateId", sendTemplateController.Create, middleware.ApiMiddleware())
 		}
 	}

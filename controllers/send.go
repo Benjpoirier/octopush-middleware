@@ -30,14 +30,15 @@ func (u SendTemplateController) Create(c *gin.Context) {
 
 	if err := c.ShouldBindJSON(&send); err == nil {
 		var template models.SmsTemplate
-		err := db.GetDB().Find(&template, c.Param("smsTemplateId")).Error
-		if err != nil {
-			user, _ := c.Get("user")
-			Send(&template, send, user.(models.User))
-		}
-
+		err := db.GetDB().Find(&template, models.SmsTemplate{ID: c.Param("smsTemplateId")}).Error
 		if err == nil {
-			c.JSON(http.StatusOK, gin.H{"data": template})
+			user := c.MustGet("user").(models.User)
+			_, err := Send(&template, &send, user)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			} else {
+				c.JSON(http.StatusOK, gin.H{"data": send})
+			}
 		} else {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		}
@@ -46,10 +47,14 @@ func (u SendTemplateController) Create(c *gin.Context) {
 	}
 }
 
-func Send(template *models.SmsTemplate, send models.ApiSendTemplate, user models.User) (octopush.OctopushResult, error) {
+func Send(template *models.SmsTemplate, send *models.ApiSendTemplate, user models.User) (octopush.OctopushResult, error) {
 	sender := template.SmsSender
+	smsType := template.SmsType
 	if send.SmsSender != "" {
 		sender = send.SmsSender
+	}
+	if template.SmsType == "" {
+		smsType = "XXX"
 	}
 	msg := mustache.Render(template.Content, send.Data)
 	sms := octopush.OctopushSms{
@@ -58,6 +63,7 @@ func Send(template *models.SmsTemplate, send models.ApiSendTemplate, user models
 		SmsText:       msg,
 		Userlogin:     user.Email,
 		APIKey:        user.ThirdPartAPIKey,
+		SmsType:       smsType,
 	}
 	result, err := sms.Send()
 	err = db.GetDB().Create(&send).Error

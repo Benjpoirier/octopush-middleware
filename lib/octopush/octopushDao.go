@@ -1,48 +1,54 @@
 package octopush
 
 import (
-	"bytes"
 	"encoding/json"
 	"net/http"
+	"net/url"
 
 	"github.com/lzientek/octopush-middleware/config"
 )
 
 type OctopushSms struct {
-	Userlogin     string `json:"user_login"`
-	APIKey        string `json:"api_key"`
-	SmsRecipients string `json:"sms_recipients"`
-	SmsText       string `json:"sms_text"`
-	SmsType       string `json:"sms_type"`
-	SmsSender     string `json:"sms_sender"`
-	RequestMode   string `json:"request_mode"`
+	Userlogin     string `form:"user_login"`
+	APIKey        string `form:"api_key"`
+	SmsRecipients string `form:"sms_recipients"`
+	SmsText       string `form:"sms_text"`
+	SmsType       string `form:"sms_type"`
+	SmsSender     string `form:"sms_sender"`
+	RequestMode   string `form:"request_mode"`
 }
 
 type OctopushResult struct {
-	Cost             string `json:"cost"`
-	Ticket           string `json:"ticket"`
-	SendingDate      string `json:"sending_date"`
-	NumberOfSendings string `json:"number_of_sendings"`
-	CurrencyCode     string `json:"currency_code"`
-	Successes        string `json:"successs"`
-	Recipients       string `json:"recipient"`
-	CountryCode      string `json:"country_code"`
-	Failures         string `json:"failures"`
+	Cost             float32 `json:"cost"`
+	Balance          float32 `json:"balance"`
+	Ticket           string  `json:"ticket"`
+	SendingDate      int     `json:"sending_date"`
+	NumberOfSendings int     `json:"number_of_sendings"`
+	CurrencyCode     string  `json:"currency_code"`
 }
 
 func (o *OctopushSms) Send() (OctopushResult, error) {
 	c := config.GetConfig()
-	url := c.GetString("app.octpush.url")
-	buffer := new(bytes.Buffer)
-	json.NewEncoder(buffer).Encode(o)
+	octoUrl := c.GetString("app.octopush.url")
+
 	if o.RequestMode == "" {
-		o.RequestMode = c.GetString("app.octpush.request_mode")
+		o.RequestMode = c.GetString("app.octopush.request_mode")
 	}
-	resp, err := http.Post(url, "application/json", buffer)
+
+	resp, err := http.PostForm(octoUrl, url.Values{
+		"user_login":     {o.Userlogin},
+		"api_key":        {o.APIKey},
+		"sms_recipients": {o.SmsRecipients},
+		"sms_text":       {o.SmsText},
+		"sms_type":       {o.SmsType},
+		"sms_sender":     {o.SmsSender},
+		"request_mode":   {o.RequestMode},
+	})
 
 	var result OctopushResult
 
-	if err != nil {
+	if err == nil {
+
 		err = json.NewDecoder(resp.Body).Decode(&result)
 		return result, err
 	}
