@@ -18,7 +18,10 @@ func NewRouter() *gin.Engine {
 		{
 			users.Use(middleware.AdminMiddleware())
 			userController := new(controllers.UserController)
+			users.GET("/", userController.GetAll)
 			users.POST("/", userController.Create)
+			users.PUT("/:id", userController.Update)
+			users.GET("/:id", userController.Show)
 		}
 
 		templates := v1.Group("/templates")

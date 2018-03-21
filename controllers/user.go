@@ -46,3 +46,32 @@ func (u UserController) Create(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 }
+
+func (u UserController) Show(c *gin.Context) {
+	var user models.User
+	err := db.GetDB().First(&user, models.User{ID: c.Param("id")}).Error
+
+	if err != nil {
+		c.JSON(500, gin.H{"message": "Error to retrieve user", "error": err})
+		c.Abort()
+		return
+	}
+
+	c.JSON(200, gin.H{"data": user})
+}
+
+func (u UserController) Update(c *gin.Context) {
+	var user models.User
+
+	if err := c.ShouldBindJSON(&user); err == nil {
+		err := db.GetDB().Model(&user).Where("id = ?", c.Param("id")).Update(user).Error
+
+		if err == nil {
+			c.JSON(http.StatusOK, gin.H{"data": user})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		}
+	} else {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+}

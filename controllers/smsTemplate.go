@@ -28,7 +28,7 @@ func (u SmsTemplateController) Show(c *gin.Context) {
 	err := db.GetDB().First(&smsTemplate, models.SmsTemplate{UserID: c.MustGet("user").(models.User).ID, ID: c.Param("id")}).Error
 
 	if err != nil {
-		c.JSON(500, gin.H{"message": "Error to retrieve user", "error": err})
+		c.JSON(500, gin.H{"message": "Error to retrieve template", "error": err})
 		c.Abort()
 		return
 	}
