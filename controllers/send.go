@@ -14,7 +14,7 @@ type SendTemplateController struct{}
 
 func (u SendTemplateController) GetAll(c *gin.Context) {
 	var sentTemplates []models.SendTemplate
-	err := db.GetDB().Find(&sentTemplates, models.SendTemplate{SmsTemplateID: c.Param("smsTemplateId")}).Error
+	err := db.GetDB().Order("created_at desc").Limit(50).Find(&sentTemplates, models.SendTemplate{SmsTemplateID: c.Param("smsTemplateId")}).Error
 
 	if err != nil {
 		c.JSON(500, gin.H{"message": "Error to retrieve sendings", "error": err})
@@ -66,6 +66,11 @@ func Send(template *models.SmsTemplate, send *models.ApiSendTemplate, user model
 		SmsType:       smsType,
 	}
 	result, err := sms.Send()
-	err = db.GetDB().Create(&send).Error
+	save := models.SendTemplate{
+		SmsRecipients: send.SmsRecipients,
+		SmsSender:     sender,
+		SmsTemplateID: template.ID,
+	}
+	err = db.GetDB().Create(&save).Error
 	return result, err
 }

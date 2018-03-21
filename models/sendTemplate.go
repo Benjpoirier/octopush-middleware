@@ -8,7 +8,6 @@ type SendTemplate struct {
 	SmsRecipients string     `json:"sms_recipients" binding:"required"`
 	SmsSender     string     `json:"sms_sender" gorm:"size:11"`
 	CreatedAt     time.Time  `json:"created_at"`
-	UpdatedAt     time.Time  `json:"updated_at"`
 	DeletedAt     *time.Time `json:"-"`
 }
 

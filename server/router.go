@@ -17,6 +17,7 @@ func NewRouter() *gin.Engine {
 		users := v1.Group("/users")
 		{
 			users.Use(middleware.AdminMiddleware())
+
 			userController := new(controllers.UserController)
 			users.GET("/", userController.GetAll)
 			users.POST("/", userController.Create)
@@ -38,9 +39,10 @@ func NewRouter() *gin.Engine {
 		sends := v1.Group("/send")
 		{
 			sends.Use(middleware.ApiMiddleware())
-			sendTemplateController := new(controllers.SendTemplateController)
 
-			sends.POST("/:smsTemplateId", sendTemplateController.Create, middleware.ApiMiddleware())
+			sendTemplateController := new(controllers.SendTemplateController)
+			sends.POST("/:smsTemplateId", sendTemplateController.Create)
+			sends.GET("/:smsTemplateId", sendTemplateController.GetAll)
 		}
 	}
 
