@@ -41,6 +41,8 @@ then run:
 
 ```
 govendor sync
+govendor add +external
+
 ```
 
 ## Release History

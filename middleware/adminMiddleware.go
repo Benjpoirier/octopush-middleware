@@ -13,7 +13,7 @@ func AdminMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		auth := c.GetHeader("Authorization")
 		if strings.HasPrefix(auth, "Admin") {
-			if strings.Split(auth, " ")[1] == config.GetString("app.admin_password") {
+			if strings.Split(auth, " ")[1] == config.GetString("app.adminpassword") {
 				c.Next()
 				return
 			}

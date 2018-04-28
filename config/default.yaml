@@ -1,0 +1,13 @@
+app:
+  name: "octopush-middleware"
+  port: ":8080"
+  adminpassword: "password"
+  octopush:
+    url: "https://www.octopush-dm.com/api/sms/json"
+    request_mode: "simu"
+
+db:
+  host: "localhost"
+  user: "postgres"
+  dbname: "sms_middleware_dev"
+  password: null
